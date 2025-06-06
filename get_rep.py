@@ -264,7 +264,7 @@ def find_suspicious_data(temp_data_df):
             return None
         else:
             print("Gemini API válasz:", raw_response)
-            escaped_text = escape_markdown(raw_response)
+            escaped_text = escape_markdown(raw_responsem, version=2)
             send_telegram_message(escaped_text)
 
     except Exception as e:
