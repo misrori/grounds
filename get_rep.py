@@ -15,8 +15,6 @@ my_gemini_api_key = os.environ.get('GEMINI')
 BOT_TOKEN = os.environ.get('BOT_TOKEN')
 CHAT_ID = os.environ.get('CHAT_ID')  # foldek chat ID
 
-
-
 genai.configure(api_key=my_gemini_api_key)
 
 create_processing_dir = 'processed_data'
