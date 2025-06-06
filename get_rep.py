@@ -11,7 +11,6 @@ import time
 from telegram.helpers import escape_markdown
 
 load_dotenv()
-
 # summarize with gemini
 my_gemini_api_key = os.environ.get('GEMINI')
 BOT_TOKEN = os.environ.get('BOT_TOKEN')
