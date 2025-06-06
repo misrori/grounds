@@ -112,7 +112,7 @@ all_data_json = []
 
 max_to_process =  40
 
-for i in tqdm(new_data['id'][0:max_to_process]):
+for i in tqdm(new_ids['id'][0:max_to_process]):
     details = get_and_save_detailed_info(i)
     if details:
         all_data_json.append(details)
