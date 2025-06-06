@@ -8,6 +8,8 @@ import pickle
 import google.generativeai as genai
 from datetime import datetime
 import time
+from telegram.helpers import escape_markdown
+
 load_dotenv()
 
 # summarize with gemini
@@ -212,7 +214,7 @@ if all_dfs:
 
 # make sure it is markdown format
 
-def send_telegram_message(message, parse_mode='Markdown'):
+def send_telegram_message(message, parse_mode='MarkdownV2'):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
     payload = {
         'chat_id': CHAT_ID,
@@ -262,9 +264,9 @@ def find_suspicious_data(temp_data_df):
             return None
         else:
             print("Gemini API válasz:", raw_response)
-            send_telegram_message(raw_response)
+            escaped_text = escape_markdown(raw_response)
+            send_telegram_message(escaped_text)
 
-   
     except Exception as e:
         print(f"Hiba a Gemini API hívása során: {e}")
 
