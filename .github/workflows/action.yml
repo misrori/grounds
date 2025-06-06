@@ -30,6 +30,7 @@ jobs:
           pip install pandas
           pip install requests
           pip install google-generativeai
+          pip install tqdm
     
       - name: execute py script # run main.py
         env:
