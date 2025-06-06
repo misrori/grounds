@@ -232,14 +232,10 @@ def send_telegram_message(message, parse_mode='Markdown'):
         print("Failed to send message:", response.text)
 
 
- 
-
-
-
-
 
 
 def find_suspicious_data(temp_data_df):
+    print('starting checking suspicious data')
     time.sleep(10)  # To avoid hitting the API too fast
     prompt = (
         "Átadok neked egy táblázatnak az adatait amiben ingatlan adásvételi illetve bérbeadásnak" 
@@ -276,7 +272,7 @@ def find_suspicious_data(temp_data_df):
     except Exception as e:
         print(f"Hiba a Gemini API hívása során: {e}")
 
-find_suspicious_data(all_dfs)
+find_suspicious_data(final_df)
 
 
 
