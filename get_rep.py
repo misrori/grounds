@@ -259,7 +259,7 @@ def find_suspicious_data(temp_data_df):
         response = model.generate_content(prompt)
         raw_response = response.text.strip()
 
-        if raw_response.lower() =='nincs semmi gyanús adat':
+        if raw_response =='Nincs semmi gyanús adat.':
             print("Nincs semmi gyanús adat.")
             return None
         else:
