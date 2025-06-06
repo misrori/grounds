@@ -38,8 +38,6 @@ def read_old_data():
         return df
 
 
-
-
 # ---
 ## 2. Hirdetmény Azonosítók Lekérdezése (get_eids)
 def get_all_eids():
