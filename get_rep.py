@@ -72,6 +72,7 @@ if old_df is not None:
     old_ids = old_df['azonosító'].tolist()
     print(f"Régi azonosítók száma: {len(old_ids)}")
 else:
+    old_ids = []
     print("Nincsenek régi adatok, új azonosítókat fogunk menteni.")
 
 
