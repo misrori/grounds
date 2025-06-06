@@ -29,6 +29,7 @@ jobs:
           pip install python-dotenv
           pip install pandas
           pip install requests
+          pip install google-generativeai
     
       - name: execute py script # run main.py
         env:
