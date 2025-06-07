@@ -269,12 +269,9 @@ def find_suspicious_data(temp_data_df):
 gem_resp = find_suspicious_data(df)
 
 if (gem_resp.lower() =="nincs semmi gyanús adat."):
-    #send_telegram_message("nincs semmi gaynus")
     print("nincs gyanus")
     pass
 else:
-    # Itt escape-eljük a MarkdownV2 karaktereket
-
     send_telegram_message(gem_resp, parse_mode="HTML")
 
 
