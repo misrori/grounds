@@ -264,6 +264,18 @@ def find_suspicious_data(temp_data_df):
         " ilyen hashtagekkel vagy valamilyen formában elválasztod a következőtől és akkor jöhet a következőt megint meg megindoklod és stb."
         " A táblázatot JSON formátumban adom át neked, kérlek csak a JSON adatokat használd fel a riport elkészítéséhez."
         "Csak a riport tartalmát válaszolold és markdown szöveget csak kérek"
+        "Kérlek, formázd az alábbi ingatlan-adatokat úgy, hogy azokat Telegram MarkdownV2 formátumban tudjam beküldeni egy boton keresztül. A formátum legyen a következő:"
+
+        "- A főcím legyen: **Figyelemre méltó ingatlanok:**"
+        - Minden ingatlan külön pontban szerepeljen: `*`"
+        "- Az ingatlan nevét, darabszámát, árat emeld ki `**` csillagokkal."
+        "- Az ingatlanról egy mondatban írd meg, hogy mi történt (eladták, cserélt gazdát stb.)."
+        "- A végén legyen egy `[Részletek](URL)` link."
+        "- A sor végén helyezd el a releváns `#hashtag`-eket."
+        
+        "Ügyelj arra, hogy az üzenet megfeleljen a Telegram MarkdownV2 szabályainak: minden `_`, `.`, `(`, `)` stb. karaktert escape-elni kell."
+        
+        "Ez az üzenet kerül egy Python bot üzenetküldésébe."
         "ha semmi gyanusat nem találsz akkor csak annyit írj hogy 'nincs semmi gyanús adat'"
     )
     # ad the df in json format
