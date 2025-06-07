@@ -251,7 +251,7 @@ def find_suspicious_data(temp_data_df):
         "- Az ingatlanról egy mondatban írd meg, hogy mi történt (eladták, cserélt gazdát stb.)."
         "- A végén legyen egy `[Részletek](URL)` link."
         "- A sor végén helyezd el a releváns `#hashtag`-eket."
-        
+        "Ne használj semmi speciális kiemelést csak asima szöveg legyen sor törésekkel!"
         "Ügyelj arra, hogy az üzenet megfeleljen a Telegram MarkdownV2 szabályainak: minden `_`, `.`, `(`, `)` stb. karaktert escape-elni kell."
         
         "Ez az üzenet kerül egy Python bot üzenetküldésébe."
