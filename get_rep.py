@@ -9,6 +9,7 @@ import google.generativeai as genai
 from datetime import datetime
 import time
 from telegram.helpers import escape_markdown
+import telebot
 
 
 load_dotenv()
@@ -17,6 +18,8 @@ load_dotenv()
 my_gemini_api_key = os.environ.get('GEMINI')
 BOT_TOKEN = os.environ.get('BOT_TOKEN')
 CHAT_ID = os.environ.get('CHAT_ID')  # foldek chat ID
+
+bot = telebot.TeleBot(BOT_TOKEN)
 
 genai.configure(api_key=my_gemini_api_key)
 
@@ -215,37 +218,12 @@ if all_dfs:
 
 # make sure it is markdown format
 
-def send_telegram_message(message, parse_mode="MarkdownV2"):
+def send_telegram_message(meassage, parse_mode_text="markdown"):
     try:
-    
-        url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-        payload = {
-            'chat_id': CHAT_ID,
-            'text': message,
-            'parse_mode': parse_mode
-        }
-    
-        response = requests.post(url, data=payload)
-    
-        if response.status_code == 200:
-            print("Message sent successfully.")
-        else:
-            print("Failed to send message:", response.text)
+        bot.send_message(chat_id=CHAT_ID, text=meassage, parse_mode= parse_mode_text)
     except:
-        url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-        payload = {
-            'chat_id': CHAT_ID,
-            'text': message,
-            'parse_mode': "Markdown"
-        }
-    
-        response = requests.post(url, data=payload)
-    
-        if response.status_code == 200:
-            print("Message sent successfully.")
-        else:
-            print("Failed to send message:", response.text)
-
+        print('nem megy a küldés')
+        pass
 
 
 
