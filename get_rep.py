@@ -221,7 +221,7 @@ def send_telegram_message(message, parse_mode='MarkdownV2'):
         payload = {
             'chat_id': CHAT_ID,
             'text': message,
-            'parse_mode': "markdown"
+            'parse_mode': "Markdown"
         }
     
         response = requests.post(url, data=payload)
