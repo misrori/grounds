@@ -9,6 +9,8 @@ import google.generativeai as genai
 from datetime import datetime
 import time
 from telegram.helpers import escape_markdown
+from telegram import ParseMode
+
 
 load_dotenv()
 
@@ -214,14 +216,14 @@ if all_dfs:
 
 # make sure it is markdown format
 
-def send_telegram_message(message, parse_mode='MarkdownV2'):
+def send_telegram_message(message, parse_mode=ParseMode.MARKDOWN_V2):
     try:
     
         url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
         payload = {
             'chat_id': CHAT_ID,
             'text': message,
-            'parse_mode': "Markdown"
+            'parse_mode': parse_mode
         }
     
         response = requests.post(url, data=payload)
@@ -235,7 +237,7 @@ def send_telegram_message(message, parse_mode='MarkdownV2'):
         payload = {
             'chat_id': CHAT_ID,
             'text': message,
-            'parse_mode': parse_mode
+            'parse_mode': "Markdown"
         }
     
         response = requests.post(url, data=payload)
@@ -267,7 +269,7 @@ def find_suspicious_data(temp_data_df):
         "Kérlek, formázd az alábbi ingatlan-adatokat úgy, hogy azokat Telegram MarkdownV2 formátumban tudjam beküldeni egy boton keresztül. A formátum legyen a következő:"
 
         "- A főcím legyen: **Figyelemre méltó ingatlanok:**"
-        - Minden ingatlan külön pontban szerepeljen: `*`"
+        "- Minden ingatlan külön pontban szerepeljen: `*`"
         "- Az ingatlan nevét, darabszámát, árat emeld ki `**` csillagokkal."
         "- Az ingatlanról egy mondatban írd meg, hogy mi történt (eladták, cserélt gazdát stb.)."
         "- A végén legyen egy `[Részletek](URL)` link."
