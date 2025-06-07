@@ -85,6 +85,7 @@ if not new_data.empty:
         print(f"Új azonosítók találhatók: {len(new_ids)}")
     else:
         print("Nincsenek új azonosítók.")
+        exit(0)
 
 
 # ---
