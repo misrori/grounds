@@ -218,69 +218,64 @@ if all_dfs:
 
 # make sure it is markdown format
 
-def send_telegram_message(meassage, parse_mode_text="markdown"):
+def send_telegram_message(message, parse_mode="HTML"):
     try:
-        bot.send_message(chat_id=CHAT_ID, text=meassage, parse_mode= parse_mode_text)
-    except:
-        print('nem megy a küldés')
-        pass
-
-
-
-
-def find_suspicious_data(temp_data_df):
-    print('starting checking suspicious data')
-    time.sleep(10)  # To avoid hitting the API too fast
-    prompt = (
-        "Átadok neked egy táblázatnak az adatait amiben ingatlan adásvételi illetve bérbeadásnak" 
-        "az adatai adatait fogod megtalálni és szeretnék egy riportot küldeni a telegramra méghozzá" 
-        "arról hogy mely ingatlanok vannak 50 millió forint felett vagy esetleg három illetve 2 vagy" 
-        "annál több ingatlanról van benne szó együttesen és legalább 50 millió forint feletti értékben"
-        " cserélt gazdát ez a dolog a másik hogyha esetleg haszonbérletről van szó akkor pedig nagyon-nagymennyiségű "
-        "hektár tudom és én 5 hektár felett ti ingatlan haszon bérbeadásáról van benne szú szóval ezeket le kéne"
-        " válogatni és ezekből kéne nekem egy riport amit aztán ki tudok küldeni a telegramra hogy ezeket az ingatlanokat érdemes"
-        " megnézni azért mert és akkor leírod hogy ez miért volt kiválasztva és alatta pedig egy linket is hozzá raksz majd esetleg"
-        " ilyen hashtagekkel vagy valamilyen formában elválasztod a következőtől és akkor jöhet a következőt megint meg megindoklod és stb."
-        " A táblázatot JSON formátumban adom át neked, kérlek csak a JSON adatokat használd fel a riport elkészítéséhez."
-        "Csak a riport tartalmát válaszolold és markdown szöveget csak kérek"
-        "Kérlek, formázd az alábbi ingatlan-adatokat úgy, hogy azokat Telegram MarkdownV2 formátumban tudjam beküldeni egy boton keresztül. A formátum legyen a következő:"
-
-        "- A főcím legyen: **Figyelemre méltó ingatlanok:**"
-        "- Minden ingatlan külön pontban szerepeljen: `*`"
-        "- Az ingatlan nevét, darabszámát, árat emeld ki `**` csillagokkal."
-        "- Az ingatlanról egy mondatban írd meg, hogy mi történt (eladták, cserélt gazdát stb.)."
-        "- A végén legyen egy `[Részletek](URL)` link."
-        "- A sor végén helyezd el a releváns `#hashtag`-eket."
-        "Ne használj semmi speciális kiemelést csak asima szöveg legyen sor törésekkel!"
-        "Ügyelj arra, hogy az üzenet megfeleljen a Telegram MarkdownV2 szabályainak: minden `_`, `.`, `(`, `)` stb. karaktert escape-elni kell."
+        bot.send_message(chat_id=CHAT_ID, text=message, parse_mode=parse_mode)
+    except Exception as e:
+        print(f"Hiba az üzenetküldéskor: {e}")
         
-        "Ez az üzenet kerül egy Python bot üzenetküldésébe."
-        "ha semmi gyanusat nem találsz akkor csak annyit írj hogy 'nincs semmi gyanús adat'"
+
+# --- AI-riport funkció ---
+def find_suspicious_data(temp_data_df):
+    print('Vizsgálat elindult...')
+
+    prompt = (
+        "Átadok neked egy táblázat adatait, amelyek ingatlan adásvételi illetve bérbeadási adatokat tartalmaznak. "
+        "Szeretnék egy riportot kapni Telegramra, amelyben a következő szempontok szerint válogatod ki az ingatlanokat:\n\n"
+        "- Azokat az ingatlanokat, amelyek értéke meghaladja az 50 millió forintot.\n"
+        "- Olyan eseteket, amikor két vagy annál több ingatlanról van szó együttesen, és az összértékük meghaladja az 50 millió forintot.\n"
+        "- Ha haszonbérletről van szó, akkor az 5 hektárnál nagyobb területűeket.\n\n"
+        "Készíts ebből egy riportot, amit a Telegramra tudok küldeni. A riportban minden egyes ingatlan szerepeljen külön pontban, az alábbi HTML formátumban:\n\n"
+        "Csak a riport tartalmát válaszold, semmi más ne legyen benne.\n"
+        "Ne használj <br> <ul>, <p> vagy más, a Telegram HTML parse_mode által nem támogatott tageket.\n"
+        "A táblázat adatait JSON formátumban adom át neked, kérlek csak ez alapján készítsd el a riportot.\n\n"
+        "Ha nincs semmi gyanús adat, akkor csak annyit írj, hogy: 'Nincs semmi gyanús adat.'\n\n"
+        "legyen üres sor a talált gyanus elemek között!"
+        "Példa válasz, amit várok:\n\n"
+        "<b>Figyelemre méltó ingatlanok:</b>\n"
+        "<b>Ingatlan ára, az sszget formázd meg emberileg könyen olvashatóra pl, 12.3 Millió Ft</b>\n"
+        "<b>Település neve</b>, rövid mondat mi történt, mekkora a terület hány Hektár és egyébb gyanus info és írd le miért gyanus\n "
+        "<a href=\"http://link\">Részletek</a> \n"
+        "\n"
+        "\n"
+        "<b>Ingatlan ára, az sszget formázd meg emberileg könyen olvashatóra pl, 12.3 Millió Ft</b>\n"
+        "<b>Település neve</b>, rövid mondat mi történt, mekkora a terület hány Hektár és egyébb gyanus info és írd le miért gyanus\n "
+        "<a href=\"http://link2\">Részletek</a> \n\n "
     )
-    # ad the df in json format
-    prompt += "A táblázat adatai:\n"
-    temp_data = temp_data_df.to_dict(orient='records')  # Convert DataFrame to list of dictionaries
-    prompt += json.dumps(temp_data, ensure_ascii=False, indent=4)  # Add the JSON data to the prompt
-    
+    temp_data = temp_data_df.to_dict(orient="records")
+    prompt += json.dumps(temp_data, ensure_ascii=False, indent=4)
+
     try:
         print("Gemini API hívása...")
-        model = genai.GenerativeModel('gemini-1.5-flash') # Using 1.5 Flash for potentially better instruction following
+        model = genai.GenerativeModel("gemini-1.5-flash")
         response = model.generate_content(prompt)
         raw_response = response.text.strip()
+        return raw_response
 
-        if raw_response =='Nincs semmi gyanús adat.':
-            print("Nincs semmi gyanús adat.")
-            return None
-        else:
-            print("Gemini API válasz:", raw_response)
-            escaped_text = escape_markdown(raw_response, version=2)
-            send_telegram_message(escaped_text)
+       
 
     except Exception as e:
         print(f"Hiba a Gemini API hívása során: {e}")
+gem_resp = find_suspicious_data(df)
 
-find_suspicious_data(final_df)
+if (gem_resp.lower() =="nincs semmi gyanús adat."):
+    #send_telegram_message("nincs semmi gaynus")
+    print("nincs gyanus")
+    pass
+else:
+    # Itt escape-eljük a MarkdownV2 karaktereket
 
+    send_telegram_message(gem_resp, parse_mode="HTML")
 
 
 
