@@ -215,19 +215,36 @@ if all_dfs:
 # make sure it is markdown format
 
 def send_telegram_message(message, parse_mode='MarkdownV2'):
-    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-    payload = {
-        'chat_id': CHAT_ID,
-        'text': message,
-        'parse_mode': parse_mode
-    }
+    try:
+    
+        url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+        payload = {
+            'chat_id': CHAT_ID,
+            'text': message,
+            'parse_mode': "markdown"
+        }
+    
+        response = requests.post(url, data=payload)
+    
+        if response.status_code == 200:
+            print("Message sent successfully.")
+        else:
+            print("Failed to send message:", response.text)
+    except:
+        url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+        payload = {
+            'chat_id': CHAT_ID,
+            'text': message,
+            'parse_mode': parse_mode
+        }
+    
+        response = requests.post(url, data=payload)
+    
+        if response.status_code == 200:
+            print("Message sent successfully.")
+        else:
+            print("Failed to send message:", response.text)
 
-    response = requests.post(url, data=payload)
-
-    if response.status_code == 200:
-        print("Message sent successfully.")
-    else:
-        print("Failed to send message:", response.text)
 
 
 
@@ -246,6 +263,7 @@ def find_suspicious_data(temp_data_df):
         " megnézni azért mert és akkor leírod hogy ez miért volt kiválasztva és alatta pedig egy linket is hozzá raksz majd esetleg"
         " ilyen hashtagekkel vagy valamilyen formában elválasztod a következőtől és akkor jöhet a következőt megint meg megindoklod és stb."
         " A táblázatot JSON formátumban adom át neked, kérlek csak a JSON adatokat használd fel a riport elkészítéséhez."
+        "Csak a riport tartalmát válaszolold és markdown szöveget csak kérek"
         "ha semmi gyanusat nem találsz akkor csak annyit írj hogy 'nincs semmi gyanús adat'"
     )
     # ad the df in json format
