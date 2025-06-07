@@ -9,7 +9,6 @@ import google.generativeai as genai
 from datetime import datetime
 import time
 from telegram.helpers import escape_markdown
-from telegram import ParseMode
 
 
 load_dotenv()
@@ -216,7 +215,7 @@ if all_dfs:
 
 # make sure it is markdown format
 
-def send_telegram_message(message, parse_mode=ParseMode.MARKDOWN_V2):
+def send_telegram_message(message, parse_mode="MarkdownV2"):
     try:
     
         url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
