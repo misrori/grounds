@@ -33,19 +33,43 @@ else:
     df_all = pd.concat(df_list, ignore_index=True)
 
 df = df_all.copy()
+
+# ad this 3 filter to the user, time, price, and ingatlanok szama
+with st.expander("Szűrők", expanded=False):
+    time_filter = st.slider(
+        "Feldolgozás dátuma (utolsó 48 óra)",
+        min_value=0,
+        max_value=48,
+        value=5*24,
+        step=1
+    )
+    price_filter = st.slider(
+        "Vételárak összegzése (millió Ft)",
+        min_value=0,
+        max_value=100,
+        value=50,
+        step=1
+    )
+    ingatlanok_szama_filter = st.slider(
+        "Ingatlanok száma",
+        min_value=0,
+        max_value=10,
+        value=3,
+        step=1
+    )  
+# apply the filters
 # add a dataframe where the processed date is less than 48 hours ago
 df['processed_date'] = pd.to_datetime(df['processed_date'])
-df = df[df['processed_date'] > pd.Timestamp.now() - pd.Timedelta(hours=48)]
-
-# filter for price above 50m or ingatlanok szama greater than 3
-df = df[(df['vételárak összegzése'] > 50_000_000) | (df['helyrajzi számok száma'] > 3)]
+df = df[df['processed_date'] > pd.Timestamp.now() - pd.Timedelta(hours=time_filter)]    
+# filter for price above the price_filter or ingatlanok szama greater than ingatlanok_szama_filter
+df = df[(df['vételárak összegzése'] > price_filter * 1_000_000) | (df['ingatlanok száma'] > ingatlanok_szama_filter)]
 # order by vételárak összegzése descending
-df = df.sort_values(by='vételárak összegzése', ascending=False).reset_index(drop=True)
-
+df = df.sort_values(by='vételárak összegzése', ascending=False).reset_index(drop=True)  
 # filtered df show
-st.subheader("Hirdetmények az utolsó 48 órában (ár > 50M vagy ingatlanok száma > 3)")
-
+st.subheader("Szűrt hirdetmények")
 st.dataframe(df, use_container_width=True)
+
+
 
 # df all order by vételárak összegzése descending
 df_all = df_all.sort_values(by='vételárak összegzése', ascending=False).reset_index(drop=True)
