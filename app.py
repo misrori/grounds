@@ -37,10 +37,10 @@ df = df_all.copy()
 # ad this 3 filter to the user, time, price, and ingatlanok szama
 with st.expander("Szűrők", expanded=False):
     time_filter = st.slider(
-        "Feldolgozás dátuma (utolsó 48 óra)",
+        "Feldolgozás dátuma",
         min_value=0,
-        max_value=48,
-        value=5*24,
+        max_value=5*24,
+        value=48,
         step=1
     )
     price_filter = st.slider(
