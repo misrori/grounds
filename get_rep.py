@@ -231,27 +231,26 @@ def find_suspicious_data(temp_data_df):
     print('Vizsgálat elindult...')
 
     prompt = (
-        "Átadok neked egy táblázat adatait, amelyek ingatlan adásvételi illetve bérbeadási adatokat tartalmaznak. "
-        "Szeretnék egy riportot kapni Telegramra, amelyben a következő szempontok szerint válogatod ki az ingatlanokat:\n\n"
-        "- Azokat az ingatlanokat, amelyek értéke meghaladja az 50 millió forintot.\n"
-        "- Olyan eseteket, amikor két vagy annál több ingatlanról van szó együttesen, és az összértékük meghaladja az 50 millió forintot.\n"
-        "- Ha haszonbérletről van szó, akkor az 5 hektárnál nagyobb területűeket.\n\n"
-        "Készíts ebből egy riportot, amit a Telegramra tudok küldeni. A riportban minden egyes ingatlan szerepeljen külön pontban, az alábbi HTML formátumban:\n\n"
-        "Csak a riport tartalmát válaszold, semmi más ne legyen benne.\n"
-        "Ne használj <br> <ul>, <p> vagy más, a Telegram HTML parse_mode által nem támogatott tageket.\n"
-        "A táblázat adatait JSON formátumban adom át neked, kérlek csak ez alapján készítsd el a riportot.\n\n"
-        "Ha nincs semmi gyanús adat, akkor csak annyit írj, hogy: 'Nincs semmi gyanús adat.'\n\n"
-        "legyen üres sor a talált gyanus elemek között!"
-        "Példa válasz, amit várok:\n\n"
-        "<b>Figyelemre méltó ingatlanok:</b>\n"
-        "<b>Ingatlan ára, az sszget formázd meg emberileg könyen olvashatóra pl, 12.3 Millió Ft</b>\n"
-        "<b>Település neve</b>, rövid mondat mi történt, mekkora a terület hány Hektár és egyébb gyanus info és írd le miért gyanus\n "
-        "<a href=\"http://link\">Részletek</a> \n"
-        "\n"
-        "\n"
-        "<b>Ingatlan ára, az sszget formázd meg emberileg könyen olvashatóra pl, 12.3 Millió Ft</b>\n"
-        "<b>Település neve</b>, rövid mondat mi történt, mekkora a terület hány Hektár és egyébb gyanus info és írd le miért gyanus\n "
-        "<a href=\"http://link2\">Részletek</a> \n\n "
+    "Átadok neked egy táblázat adatait JSON formátumban, amelyek ingatlan adásvételi és bérleti adatokat tartalmaznak. "
+    "Egy sor mindig egy szerződéshez (ügylethez) tartozik. Egy szerződésen belül több ingatlan is szerepelhet.\n\n"
+
+    "Kérlek, készíts egy HTML formázású riportot, amit Telegramra tudok küldeni. A riportban az alábbi szempontok szerint válogasd ki az ingatlanokat:\n\n"
+
+    "🔍 Egy ingatlant akkor szerepeltess a riportban, ha:\n"
+    "- Adásvételről van szó, és az adott szerződéshez tartozó összes ingatlan **együttes értéke meghaladja az 50 millió forintot**. \n"
+    "- Haszonbérleti szerződés esetén, ha **egy ingatlan területe meghaladja az 5 hektárt**, azt akkor is add hozzá a riporthoz, ha a szerződésben több ingatlan is van.\n\n"
+
+    "📌 A riport formátuma legyen pontosan az alábbi (csak HTML kimenetet kérek, semmi mást):\n\n"
+    "<b>Figyelemre méltó ingatlanok:</b>\n\n"
+    "<b>[Ingatlan ára emberileg formázva, pl. 12.3 millió Ft]</b>\n"
+    "<b>[Település neve]</b>, röviden fogalmazd meg, hogy adásvétel vagy bérlet történt, mekkora a terület (hektárban), és hogy miért számít gyanúsnak\n\n"
+    "<a href=\"[URL]\">Részletek</a>\n\n"
+    
+    "Használj üres sort a különböző ingatlanok között.\n"
+    "Csak a riportot küld el, ne legyen az elején ``` html, és a végén se legyen ```"
+    "Ne használj <br>, <ul>, <p> vagy más, a Telegram HTML parse_mode által nem támogatott tageket.\n\n"
+    "Ha nincs semmi gyanús adat, akkor csak ezt válaszold: 'Nincs semmi gyanús adat.'"
+
     )
     temp_data = temp_data_df.to_dict(orient="records")
     prompt += json.dumps(temp_data, ensure_ascii=False, indent=4)
