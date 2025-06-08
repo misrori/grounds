@@ -43,6 +43,7 @@ with st.expander("Szűrők", expanded=False):
         value=48,
         step=1
     )
+    
     price_filter = st.slider(
         "Vételárak összegzése (millió Ft)",
         min_value=0,
