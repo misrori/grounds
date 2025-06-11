@@ -68,7 +68,13 @@ df = df[(df['vételárak összegzése'] > price_filter * 1_000_000) | (df['ingat
 df = df.sort_values(by='vételárak összegzése', ascending=False).reset_index(drop=True)  
 # filtered df show
 st.subheader("Szűrt hirdetmények")
-st.dataframe(df, use_container_width=True)
+#st.dataframe(df, use_container_width=True)
+st.dataframe(
+    df,
+    column_config={
+        "Link a részletekhez": st.column_config.LinkColumn()
+    }
+)
 
 
 
@@ -77,6 +83,7 @@ df_all = df_all.sort_values(by='vételárak összegzése', ascending=False).rese
 
 st.subheader("Összes hirdetmény összegzés")
 st.dataframe(df_all, use_container_width=True)
+
 
 
 st.caption(":information_source: Forrás: hirdetmeny_osszegzes.csv")
