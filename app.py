@@ -82,7 +82,14 @@ st.dataframe(
 df_all = df_all.sort_values(by='vételárak összegzése', ascending=False).reset_index(drop=True)
 
 st.subheader("Összes hirdetmény összegzés")
-st.dataframe(df_all, use_container_width=True)
+#st.dataframe(df_all, use_container_width=True)
+
+st.dataframe(
+    df_all,
+    column_config={
+        "Link a részletekhez": st.column_config.LinkColumn()
+    }
+)
 
 
 
