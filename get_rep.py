@@ -215,64 +215,22 @@ if all_dfs:
 
 ### REPORT IT
 
-
-
-# make sure it is markdown format
-
-def send_telegram_message(message, parse_mode="HTML"):
-    try:
-        bot.send_message(chat_id=CHAT_ID, text=message, parse_mode=parse_mode)
-    except Exception as e:
-        print(f"Hiba az üzenetküldéskor: {e}")
-        
-
-# --- AI-riport funkció ---
-def find_suspicious_data(temp_data_df):
-    print('Vizsgálat elindult...')
-
-    prompt = (
-    "Átadok neked egy táblázat adatait JSON formátumban, amelyek ingatlan adásvételi és bérleti adatokat tartalmaznak. "
-    "Egy sor mindig egy szerződéshez (ügylethez) tartozik. Egy szerződésen belül több ingatlan is szerepelhet.\n\n"
-
-    "Kérlek, készíts egy HTML formázású riportot, amit Telegramra tudok küldeni. A riportban az alábbi szempontok szerint válogasd ki az ingatlanokat:\n\n"
-
-    "🔍 Egy ingatlant akkor szerepeltess a riportban, ha:\n"
-    "- Adásvételről van szó, és az adott szerződéshez tartozó összes ingatlan **együttes értéke meghaladja az 50 millió forintot**. \n"
-    "- Haszonbérleti szerződés esetén, ha **egy ingatlan területe meghaladja az 5 hektárt**, azt akkor is add hozzá a riporthoz, ha a szerződésben több ingatlan is van.\n\n"
-
-    "📌 A riport formátuma legyen pontosan az alábbi (csak HTML kimenetet kérek, semmi mást):\n\n"
-    "<b>Figyelemre méltó ingatlanok:</b>\n\n"
-    "<b>[Ingatlan ára emberileg formázva, pl. 12.3 millió Ft]</b>\n"
-    "<b>[Település neve]</b>, röviden fogalmazd meg, hogy adásvétel vagy bérlet történt, mekkora a terület (hektárban), és hogy miért számít gyanúsnak\n\n"
-    "<a href=\"[URL]\">Részletek</a>\n\n"
+big_prop = final_df[final_df['vételárak összegzése']>50_000_000]
+if len(big_prop)>0:
     
-    "Használj üres sort a különböző ingatlanok között.\n"
-    "Csak a riportot küld el, ne legyen az elején ``` html, és a végén se legyen ```"
-    "Ne használj <br>, <ul>, <p> vagy más, a Telegram HTML parse_mode által nem támogatott tageket.\n\n"
-    "Ha nincs semmi gyanús adat, akkor csak ezt válaszold: 'Nincs semmi gyanús adat.'"
+    report_lines = ['Figyelemre méltó ingatlanok:\n\n']
+    for _, row in big_prop.iterrows():
+        price_millions = row["vételárak összegzése"] / 1_000_000
+        report_lines.append(f"<b>Ingatlan ára: {price_millions:.1f} millió Ft</b>")
+        report_lines.append(f"<b>{row['település']}</b>, helyrajzi számok száma: {row['helyrajzi számok száma']}	")
+        report_lines.append(f"<a href=\"{row['Link a részletekhez']}\">Részletek</a>")
+        report_lines.append("\n")
 
-    )
-    temp_data = temp_data_df.to_dict(orient="records")
-    prompt += json.dumps(temp_data, ensure_ascii=False, indent=4)
+    # Eredmény kiírása
+    html_report = "\n".join(report_lines)
+    bot.send_message(chat_id=CHAT_ID, text=html_report, parse_mode="HTML")
 
-    try:
-        print("Gemini API hívása...")
-        model = genai.GenerativeModel("gemini-1.5-flash")
-        response = model.generate_content(prompt)
-        raw_response = response.text.strip()
-        return raw_response
 
-       
-
-    except Exception as e:
-        print(f"Hiba a Gemini API hívása során: {e}")
-gem_resp = find_suspicious_data(df)
-
-if (gem_resp.lower() =="nincs semmi gyanús adat."):
-    print("nincs gyanus")
-    pass
-else:
-    send_telegram_message(gem_resp, parse_mode="HTML")
 
 
 
