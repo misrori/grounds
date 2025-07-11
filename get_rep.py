@@ -42,7 +42,10 @@ def get_all_eids():
 
 # Futtatás
 new_data = get_all_eids()
+new_data['id'] = new_data['id'].astype(str)
 old_df = pd.read_pickle('all_data.pickle')
+old_df['azonosító'] = old_df['azonosító'].astype(str)
+
 
 if old_df is not None:
     # old_df = pd.read_pickle('all_eids.pickle')
@@ -98,10 +101,6 @@ for i in tqdm(new_ids['id'][0:max_to_process]):
     if details:
         all_data_json.append(details)
 
-print("------------")
-print(all_data)
-print("------------")
-        
 
 
 
