@@ -99,6 +99,11 @@ for i in tqdm(new_ids['id'][0:max_to_process]):
     if details:
         all_data_json.append(details)
 
+print("------------")
+print(all_data)
+print("------------")
+        
+
 
 
 
@@ -204,6 +209,8 @@ if all_dfs:
     print(f"Összesített DataFrame mérete: {final_df.shape}")
     # Save the combined df 
     final_df_to_save = pd.concat([old_df, final_df], axis=0, ignore_index=True)
+
+    print(f'i save new data {len(final_df_to_save)}')
 
     final_df_to_save.to_pickle('all_data.pickle')
 
