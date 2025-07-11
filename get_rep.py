@@ -21,28 +21,6 @@ CHAT_ID = os.environ.get('CHAT_ID')  # foldek chat ID
 
 bot = telebot.TeleBot(BOT_TOKEN)
 
-
-create_processing_dir = 'processed_data'
-if not os.path.exists(create_processing_dir):
-    os.makedirs(create_processing_dir)
-
-def read_old_data():
-    data_files = os.listdir('processed_data')
-    data_files = [f for f in data_files if f.endswith('.pickle')]
-    if not data_files:
-        return None
-    else:
-        df_list = []
-        for file in data_files:
-            file_path = os.path.join('processed_data', file)
-            df = pd.read_pickle(file_path)
-            df_list.append(df)
-        
-        # Combine all dataframes into one
-        df = pd.concat(df_list, ignore_index=True)
-        return df
-
-
 # ---
 ## 2. Hirdetmény Azonosítók Lekérdezése (get_eids)
 def get_all_eids():
@@ -65,8 +43,8 @@ def get_all_eids():
 
 # Futtatás
 new_data = get_all_eids()
+old_df = pd.read_pickle('all_data.pickle')
 
-old_df = read_old_data()
 if old_df is not None:
     # old_df = pd.read_pickle('all_eids.pickle')
     print(f"Régi adatok betöltve: {len(old_df)} azonosító.")
@@ -125,7 +103,7 @@ for i in tqdm(new_ids['id'][0:max_to_process]):
 
 
 def get_batch_info_df(temp_data):
-    time.sleep(10)  # To avoid hitting the API too fast
+    time.sleep(5)  # To avoid hitting the API too fast
     prompt = (
         "Átadok egy listát ami json adatokat tartalmaz minden egyes elemeal istának az egy ingatlan adásvétel vagy bérbeadásáról szól és ö nagyon trükkös maga a jason formú öö struktúra mert ezek különbözők lehetnek szóval van ahol egy darab vétel árban van valahol több van valahol az egyvétel árman szövegként van berakva és el van választva egymással szóval így én nehezen értelmezhető és neked az lenne a feladatod hogy minden egyes elemét annak a listának külön értelmezd és elemezd és az elemzésben a következőket szeretném visszakapni hány darab csatolmány volt a fához mi az azonosítója a linkje az összes vétel árnak az összegét és ezen kívül hogy hungary darab helyrajzi szám darab volt az adásvételi ben illetve hány darab ingatlanról van szó\n"
         "Kérlek, JSON formátumban válaszolj. "
@@ -217,25 +195,17 @@ for i in tqdm(range(0, len(all_data_json), batch_size)):
     df = get_batch_info_df(batch)
     if df is not None:
         all_dfs.append(df)
-    current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
-    csv_file_name = f"{create_processing_dir}/hirdetmeny_osszegzes_batch_{current_time}.pickle"
-    df.to_pickle(csv_file_name)
 
-
-
-
-
-    
+ 
 
 # Combine all DataFrames into one
 if all_dfs:
     final_df = pd.concat(all_dfs, ignore_index=True)
     print(f"Összesített DataFrame mérete: {final_df.shape}")
-    # Save the final DataFrame to a pickle file
-    final_pickle_path = os.path.join('hirdetmeny_osszegzes_final.pickle')
-    final_df.to_pickle(final_pickle_path)
-    print(f"Összesített DataFrame elmentve: {final_pickle_path}")
+    # Save the combined df 
+    final_df_to_save = pd.concat([old_df, final_df], axis=0, ignore_index=True)
 
+    final_df_to_save.to_pickle('all_data.pickle')
 
 
 
