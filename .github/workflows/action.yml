@@ -33,6 +33,7 @@ jobs:
           pip install tqdm
           pip install telebot
           pip install python-telegram-bot
+          pip install openai
     
       - name: execute py script # run main.py
         env:
