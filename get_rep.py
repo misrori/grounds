@@ -170,7 +170,7 @@ def get_batch_info_df(temp_data):
                     "content": prompt,
                 }
             ],
-            model="gpt-4o",
+            model="gpt-4o-mini",
         )
 
 
