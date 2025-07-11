@@ -174,7 +174,7 @@ def get_batch_info_df(temp_data):
         )
 
 
-        raw_json_string = chat_completion.choices[0].message.content
+        raw_json_string = chat_completion.choices[0].message.content.strip()
 
         # remove``` jsoon from the beginining and end if present
         # if raw_json_string.startswith('```json'):
