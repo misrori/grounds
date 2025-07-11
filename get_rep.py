@@ -178,10 +178,22 @@ def get_batch_info_df(temp_data):
 
         # remove``` jsoon from the beginining and end if present
         # if raw_json_string.startswith('```json'):
+        # Tisztítás: ha ```json ... ``` blokkban jött vissza
+        
         if raw_json_string.startswith('```json'):
             raw_json_string = raw_json_string[8:].strip()
         if raw_json_string.endswith('```'):
             raw_json_string = raw_json_string[:-3].strip()
+
+        # Csak az első `[` és az utolsó `]` közötti rész megtartása
+        start_idx = raw_json_string.find('[')
+        end_idx = raw_json_string.rfind(']')
+        if start_idx != -1 and end_idx != -1 and end_idx > start_idx:
+            raw_json_string = raw_json_string[start_idx:end_idx + 1]
+
+        data = json.loads(raw_json_string)
+
+
 
         # Attempt to parse the string as JSON
         try:
