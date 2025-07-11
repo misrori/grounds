@@ -11,7 +11,6 @@ import time
 from telegram.helpers import escape_markdown
 import telebot
 
-
 load_dotenv()
 
 # summarize with gemini
