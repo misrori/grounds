@@ -5,7 +5,7 @@ import os
 from tqdm import tqdm
 import json
 import pickle
-import google.generativeai as genai
+from openai import OpenAI
 from datetime import datetime
 import time
 from telegram.helpers import escape_markdown
@@ -15,13 +15,12 @@ import telebot
 load_dotenv()
 
 # summarize with gemini
-my_gemini_api_key = os.environ.get('GEMINI')
+OPEN_AI_API_KEY = os.environ.get('GEMINI')
 BOT_TOKEN = os.environ.get('BOT_TOKEN')
 CHAT_ID = os.environ.get('CHAT_ID')  # foldek chat ID
 
 bot = telebot.TeleBot(BOT_TOKEN)
 
-genai.configure(api_key=my_gemini_api_key)
 
 create_processing_dir = 'processed_data'
 if not os.path.exists(create_processing_dir):
@@ -149,7 +148,8 @@ def get_batch_info_df(temp_data):
         "  \"helyrajzi számok száma\": \"helyrajzi számok száma számként\",\n"
         "  \"ingatlanok száma\": \"ingatlanok száma számként\",\n"
         "  \"település\": \"település_ide\",\n"
-        "  \"vételár\": \"ár_ide az összes ár összeadva számként\",\n"
+        "  \"vételárak összegzése\": \"ár_ide az összes ár összeadva számként amenyiben adásvétel történt\",\n"
+        "  \"bérleti díj\": \"ár_ide az összes ár összeadva számként amenyiben haszonbérlet történt\",\n"
         "  \"pénznem\": \"HUF vagy EUR\",\n"
         "}\n\n"
         "JSON:\n" 
@@ -157,10 +157,24 @@ def get_batch_info_df(temp_data):
     prompt += json.dumps(temp_data, ensure_ascii=False, indent=4) + "\n"
 
     try:
-        print("Gemini API hívása...")
-        model = genai.GenerativeModel('gemini-1.5-flash') # Using 1.5 Flash for potentially better instruction following
-        response = model.generate_content(prompt)
-        raw_json_string = response.text.strip()
+        print("OPENAI API hívása...")
+        client = OpenAI(
+            #api_key=os.environ.get("OPENAI_API_KEY"),  # This is the default and can be omitted
+            api_key = OPEN_AI_API_KEY
+        )
+
+        chat_completion = client.chat.completions.create(
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt,
+                }
+            ],
+            model="gpt-4o",
+        )
+
+
+        raw_json_string = chat_completion.choices[0].message.content
 
         # remove``` jsoon from the beginining and end if present
         # if raw_json_string.startswith('```json'):
@@ -180,7 +194,7 @@ def get_batch_info_df(temp_data):
             print(f"Nyers válasz a Geminitől:\n{raw_json_string}")
             print( None)
     except Exception as e:
-        print(f"Hiba a Gemini API hívása során: {e}")
+        print(f"Hiba a openai API hívása során: {e}")
 
 
 # with 20 line batching get the df and combine them
@@ -229,15 +243,3 @@ if len(big_prop)>0:
     # Eredmény kiírása
     html_report = "\n".join(report_lines)
     bot.send_message(chat_id=CHAT_ID, text=html_report, parse_mode="HTML")
-
-
-
-
-
-
-
-
-
-
-
-
