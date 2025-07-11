@@ -230,4 +230,4 @@ if len(big_prop)>0:
     # Eredmény kiírása
     html_report = "\n".join(report_lines)
     print(f'ez lenne a z üzi{html_report}')
-    #bot.send_message(chat_id=CHAT_ID, text=html_report, parse_mode="HTML")
+    bot.send_message(chat_id=CHAT_ID, text=html_report, parse_mode="HTML")
