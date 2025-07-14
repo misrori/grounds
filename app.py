@@ -5,32 +5,7 @@ import os
 st.set_page_config(page_title="Hirdetmény összegzés", layout="wide")
 st.title("Hirdetmény összegző dashboard")
 
-# data beolvasása it is on processed data folder in batches in pickle format multiple files
-# # list the processed data folder and read the pickle than combaine
-data_files = os.listdir('processed_data')
-data_files = [f for f in data_files if f.endswith('.pickle')]
-if not data_files:
-    st.error("Nincsenek feldolgozott adatok a 'processed_data' mappában.")
-else:
-    df_list = []
-    for file in data_files:
-        file_path = os.path.join('processed_data', file)
-        df = pd.read_pickle(file_path)
-        # add the processed date as a new column the format hirdetmeny_osszegzes_batch_20250606_120949.pickle
-        # assuming the file name format is hirdetmeny_osszegzes_batch_YYYYMMDD_HHMMSS.pickle
-        # extract the date from the file name and convert it to datetime
-        # e.g. hirdetmeny_osszegzes_batch_20250606.pickle
-        # extract the date part from the file name
-        # and convert it to datetime and timestamp 0250606_120949
-        # assuming the file name format is hirdetmeny_osszegzes_batch_YYYYMMDD_HHMMSS.pickle
-        # extract the date from the file name
-        date_part = file.split('_')[3]
-        time_part = file.split('_')[4].replace('.pickle', '')
-        df['processed_date'] = pd.to_datetime(date_part + '_' + time_part, format='%Y%m%d_%H%M%S')
-        df_list.append(df)
-
-    # Combine all dataframes into one
-    df_all = pd.concat(df_list, ignore_index=True)
+df_all = pd.read_pickle('all_data.pickle')
 
 df = df_all.copy()
 
