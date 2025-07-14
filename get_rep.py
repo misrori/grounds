@@ -44,7 +44,6 @@ def get_all_eids():
 new_data = get_all_eids()
 new_data['id'] = new_data['id'].astype(str)
 old_df = pd.read_pickle('all_data.pickle')
-old_df = old_df.iloc[:-5]
 
 old_df['azonosító'] = old_df['azonosító'].astype(str)
 
