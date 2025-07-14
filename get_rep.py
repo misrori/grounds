@@ -204,6 +204,7 @@ for i in tqdm(range(0, len(all_data_json), batch_size)):
 # Combine all DataFrames into one
 if all_dfs:
     final_df = pd.concat(all_dfs, ignore_index=True)
+    filan_df['processed_date'] = datetime.now().strftime("%Y%m%d_%H%M%S")
     print(f"Összesített DataFrame mérete: {final_df.shape}")
     # Save the combined df 
     final_df_to_save = pd.concat([old_df, final_df], axis=0, ignore_index=True)
