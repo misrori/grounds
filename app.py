@@ -6,6 +6,7 @@ st.set_page_config(page_title="Hirdetmény összegzés", layout="wide")
 st.title("Hirdetmény összegző dashboard")
 
 df_all = pd.read_pickle('all_data.pickle')
+df_all['processed_date'] = pd.to_datetime(df_all['processed_date'], format='%Y%m%d_%H%M%S')
 
 df = df_all.copy()
 
