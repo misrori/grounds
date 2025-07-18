@@ -180,7 +180,10 @@ def get_batch_info_df(temp_data):
         # Attempt to parse the string as JSON
         try:
             parsed_json = json.loads(raw_json_string)
-            df = pd.DataFrame(parsed_json)
+            if len(new_ids) ==1:
+                df = pd.DataFrame(parsed_json, index=[0])
+            else:
+                df = pd.DataFrame(parsed_json)
             return df
 
         except json.JSONDecodeError as e:
